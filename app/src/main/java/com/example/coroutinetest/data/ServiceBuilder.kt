@@ -1,4 +1,4 @@
-package com.example.coroutinetest
+package com.example.coroutinetest.data
 
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor

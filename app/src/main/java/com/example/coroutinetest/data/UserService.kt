@@ -1,8 +1,7 @@
-package com.example.coroutinetest
+package com.example.coroutinetest.data
 
-import retrofit2.Call
+import com.example.coroutinetest.data.User
 import retrofit2.http.GET
-import retrofit2.http.Path
 
 interface UserService {
     @GET("users")
