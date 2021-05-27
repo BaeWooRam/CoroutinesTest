@@ -73,7 +73,6 @@ class MainViewModel(private val index:Int): ViewModel(){
         super.onCleared()
     }
 
-
     /**
      * 해당 ViewModel에 종속성을 주입시키는 방법이다.
      * 이 경우에는 특정 객체나 값을 주입시키기 위한 생성자라고 생각하면 될듯하다.
