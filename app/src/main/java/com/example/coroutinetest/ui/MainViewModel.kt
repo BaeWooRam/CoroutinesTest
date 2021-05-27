@@ -2,9 +2,7 @@ package com.example.coroutinetest.ui
 
 import android.os.Bundle
 import android.util.Log
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.*
 import com.example.coroutinetest.data.User
 import com.example.coroutinetest.data.UserModel
 import com.example.coroutinetest.manager.BaseUiObserver
@@ -46,6 +44,9 @@ class MainViewModel(private val index:Int): ViewModel(){
      * 항상 활성화 상태로 간주하기 위해서는 observeForever(Observer) 메서드를 사용합니다. 지울 때는 removeObserver(Observer) 메서드를 사용합니다.
      */
     val item:MutableLiveData<List<User>> = MutableLiveData<List<User>>()
+    var filterItem1:MutableLiveData<String> = MutableLiveData<String>()
+    var filterItem2:MutableLiveData<String> = MutableLiveData<String>()
+    val mediatorLiveData:MediatorLiveData<User> = MediatorLiveData()
     private val userModel = UserModel()
     private val scope = CoroutineScope(Job() + Dispatchers.Main)
 
@@ -58,11 +59,6 @@ class MainViewModel(private val index:Int): ViewModel(){
             val data = ArrayList(userModel.getUser())
             Log.d(TAG, "index = $index, data = $data")
             item.postValue(data)
-            /*UiObserverManager.notifyUpdate(
-                BaseUiObserver.UiType.Main,
-                Bundle().apply {
-                    putParcelableArrayList(BUNDLE_USER_DATA, data)
-                })*/
         }
     }
 
