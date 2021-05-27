@@ -27,7 +27,7 @@ class MainActivity : AppCompatActivity(R.layout.activity_main) {
     }
 
     private fun initViewModel() {
-        viewModel = ViewModelProvider(this, ViewModelProvider.NewInstanceFactory())[MainViewModel::class.java]
+        viewModel = ViewModelProvider(this, MainViewModel.MainViewModelFactory())[MainViewModel::class.java]
     }
 
     private fun initUiObserver() {
