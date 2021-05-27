@@ -1,6 +1,7 @@
 package com.example.coroutinetest.ui
 
 import android.os.Bundle
+import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.example.coroutinetest.data.User
@@ -24,7 +25,7 @@ import kotlinx.coroutines.launch
  * ViewModel 객체의 범위는 ViewModel을 가져올때 ViewModelProvider에 전달되는 Lifecycle로 지정됩니다.
  * ViewModel은 범위가 지정된 Lifecycle이 영구적으로 경과될 때까지, 즉 활동에서는 활동이 끝날 때까지 그리고 프로그먼트에서는 프로그먼트가 분리될 때까지 메모리에 남아 있습니다.
  */
-class MainViewModel :ViewModel(){
+class MainViewModel: ViewModel(){
 
     /**
      * LiveData
@@ -43,7 +44,7 @@ class MainViewModel :ViewModel(){
      *
      * 항상 활성화 상태로 간주하기 위해서는 observeForever(Observer) 메서드를 사용합니다. 지울 때는 removeObserver(Observer) 메서드를 사용합니다.
      */
-    private val item = MutableLiveData<User>()
+    val item:MutableLiveData<List<User>> = MutableLiveData<List<User>>()
     private val userModel = UserModel()
     private val scope = CoroutineScope(Job() + Dispatchers.Main)
 
@@ -54,12 +55,13 @@ class MainViewModel :ViewModel(){
     fun fetchUser() {
         scope.launch {
             val data = ArrayList(userModel.getUser())
-
-            UiObserverManager.notifyUpdate(
+            Log.d(TAG, "data = $data")
+            item.postValue(data)
+            /*UiObserverManager.notifyUpdate(
                 BaseUiObserver.UiType.Main,
                 Bundle().apply {
                     putParcelableArrayList(BUNDLE_USER_DATA, data)
-                })
+                })*/
         }
     }
 
@@ -71,6 +73,7 @@ class MainViewModel :ViewModel(){
     }
 
     companion object {
+        const val TAG = "MainViewModel"
         const val BUNDLE_USER_DATA = "bundle_user_data"
     }
 }
