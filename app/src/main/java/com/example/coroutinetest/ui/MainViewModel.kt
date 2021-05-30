@@ -11,6 +11,10 @@ import kotlinx.coroutines.launch
 
 class MainViewModel {
     private val userModel = UserModel()
+
+    /**
+     * Job은 코루틴의 핸들입니다. lunch 또는 async로 만드는 각 코루틴은 코루틴을 고유하게 식별하고 수명주기를 관리하는 Job 인스턴스를 반환합니다.
+     */
     private val scope = CoroutineScope(Job() + Dispatchers.Main)
 
     /**
@@ -18,7 +22,7 @@ class MainViewModel {
      * async : 새 코루틴을 시작하고 await라는 정지 함수로 결과를 반환하도록 허용합니다.
      */
     fun fetchUser() {
-        scope.launch {
+        val job = scope.launch {
             val data = ArrayList(userModel.getUser())
 
             UiObserverManager.notifyUpdate(
@@ -27,6 +31,9 @@ class MainViewModel {
                     putParcelableArrayList(BUNDLE_USER_DATA, data)
                 })
         }
+
+        if(job.isCancelled)
+            job.cancel()
     }
 
     companion object {
