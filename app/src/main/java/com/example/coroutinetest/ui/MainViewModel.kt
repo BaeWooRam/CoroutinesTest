@@ -88,18 +88,20 @@ class MainViewModel(private val index: Int) : ViewModel() {
     }
 
 
+
     fun getEvent() = callbackFlow<Unit> {
-        userModel.getUser()
+
+        Log.d(javaClass.simpleName, "getEvent User = ${userModel.getUser()}")
 
         //이벤트를 흐름에 보냅니다. 소비자는 새로운 이벤트를 받게 됩니다.
-        offer(Unit)
+//        offer(Unit)
+
+        //Firebase를 초기화 할 수 없는 경우 데이터 스트림을 닫습니다. 흐름 소비자가 수집을 중지하고 코루틴이 다시 시작됩니다.
+//        close()
+        Log.d(javaClass.simpleName, "getEvent Posts = ${postModel.getPosts()}")
 
         //awaitClose 내부의 콜백은 흐름이 닫히거나 취소되었습니다.
         awaitClose()
-
-        //Firebase를 초기화 할 수 없는 경우 데이터 스트림을 닫습니다. 흐름 소비자가 수집을 중지하고 코루틴이 다시 시작됩니다.
-        close()
-        postModel.getPosts()
     }
 
     companion object {
