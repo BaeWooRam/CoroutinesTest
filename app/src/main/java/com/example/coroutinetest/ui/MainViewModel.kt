@@ -3,6 +3,7 @@ package com.example.coroutinetest.ui
 import android.os.Bundle
 import android.util.Log
 import androidx.lifecycle.*
+import com.example.coroutinetest.data.PostModel
 import com.example.coroutinetest.data.User
 import com.example.coroutinetest.data.UserModel
 import com.example.coroutinetest.manager.BaseUiObserver
@@ -10,6 +11,8 @@ import com.example.coroutinetest.manager.UiObserverManager
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.channels.awaitClose
+import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.launch
 
 /**
@@ -24,7 +27,7 @@ import kotlinx.coroutines.launch
  * ViewModel 객체의 범위는 ViewModel을 가져올때 ViewModelProvider에 전달되는 Lifecycle로 지정됩니다.
  * ViewModel은 범위가 지정된 Lifecycle이 영구적으로 경과될 때까지, 즉 활동에서는 활동이 끝날 때까지 그리고 프로그먼트에서는 프로그먼트가 분리될 때까지 메모리에 남아 있습니다.
  */
-class MainViewModel(private val index:Int): ViewModel(){
+class MainViewModel(private val index: Int) : ViewModel() {
 
     /**
      * LiveData
@@ -43,11 +46,12 @@ class MainViewModel(private val index:Int): ViewModel(){
      *
      * 항상 활성화 상태로 간주하기 위해서는 observeForever(Observer) 메서드를 사용합니다. 지울 때는 removeObserver(Observer) 메서드를 사용합니다.
      */
-    val item:MutableLiveData<List<User>> = MutableLiveData<List<User>>()
-    var filterItem1:MutableLiveData<String> = MutableLiveData<String>()
-    var filterItem2:MutableLiveData<String> = MutableLiveData<String>()
-    val mediatorLiveData:MediatorLiveData<User> = MediatorLiveData()
+    val item: MutableLiveData<List<User>> = MutableLiveData<List<User>>()
+    var filterItem1: MutableLiveData<String> = MutableLiveData<String>()
+    var filterItem2: MutableLiveData<String> = MutableLiveData<String>()
+    val mediatorLiveData: MediatorLiveData<User> = MediatorLiveData()
     private val userModel = UserModel()
+    private val postModel = PostModel()
     private val scope = CoroutineScope(Job() + Dispatchers.Main)
 
     /**
@@ -73,10 +77,25 @@ class MainViewModel(private val index:Int): ViewModel(){
      * 해당 ViewModel에 종속성을 주입시키는 방법이다.
      * 이 경우에는 특정 객체나 값을 주입시키기 위한 생성자라고 생각하면 될듯하다.
      */
-    class MainViewModelFactory():ViewModelProvider.Factory{
+    class MainViewModelFactory() : ViewModelProvider.Factory {
         override fun <T : ViewModel?> create(modelClass: Class<T>): T {
             return MainViewModel(1) as T
         }
+    }
+
+
+    fun getEvent() = callbackFlow<Unit> {
+        userModel.getUser()
+
+        //이벤트를 흐름에 보냅니다. 소비자는 새로운 이벤트를 받게 됩니다.
+        offer(Unit)
+
+        //awaitClose 내부의 콜백은 흐름이 닫히거나 취소되었습니다.
+        awaitClose()
+
+        //Firebase를 초기화 할 수 없는 경우 데이터 스트림을 닫습니다. 흐름 소비자가 수집을 중지하고 코루틴이 다시 시작됩니다.
+        close()
+        postModel.getPosts()
     }
 
     companion object {
