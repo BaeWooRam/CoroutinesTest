@@ -12,6 +12,7 @@
         android:layout_height="wrap_content"
         android:text="Hello World!"
         android:gravity="center"
+        android:visibility="gone"
         app:layout_constraintVertical_chainStyle="packed"
         app:layout_constraintBottom_toTopOf="@id/btLoadInfo"
         app:layout_constraintLeft_toLeftOf="parent"

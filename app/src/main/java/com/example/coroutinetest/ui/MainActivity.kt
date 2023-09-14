@@ -3,6 +3,7 @@ package com.example.coroutinetest.ui
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
+import android.view.View
 import android.widget.Button
 import android.widget.TextView
 import androidx.lifecycle.*
@@ -83,7 +84,11 @@ class MainActivity : AppCompatActivity(R.layout.activity_main) {
 
         observer = Observer {
             Log.d(TAG, "data = $it")
-            tvInfo?.text = it.toString()
+            CoroutineScope(Dispatchers.Main).launch {
+                delay(1000)
+                tvInfo?.visibility = View.VISIBLE
+                tvInfo?.text = it.toString()
+            }
         }
 
         if (observer != null)
