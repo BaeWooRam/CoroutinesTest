@@ -9,16 +9,14 @@ import android.widget.TextView
 import androidx.lifecycle.*
 import com.example.coroutinetest.R
 import com.example.coroutinetest.data.User
-import com.example.coroutinetest.data.UserModel
 import com.example.coroutinetest.manager.BaseUiObserver
 import com.example.coroutinetest.manager.UiObserverManager
 import kotlinx.coroutines.*
-import org.w3c.dom.Text
 
 class MainActivity : AppCompatActivity(R.layout.activity_main) {
     private var viewModel: MainViewModel? = null
     private var mainUiObserver: BaseUiObserver? = null
-    private var observer: Observer<List<User>>? = null
+    private var observer: Observer<User>? = null
     private var tvInfo:TextView? = null
     private var btLoadInfo:Button? = null
     private var btRandomTest:Button? = null
@@ -37,35 +35,19 @@ class MainActivity : AppCompatActivity(R.layout.activity_main) {
         tvInfo = findViewById<TextView>(R.id.tvInfo)
         btLoadInfo = findViewById<Button>(R.id.btLoadInfo).apply { setOnClickListener { initData() } }
         btRandomTest = findViewById<Button>(R.id.btRandomTest).apply { setOnClickListener {
-            when((0..1).random()){
-                0 ->  {
-                    viewModel!!.filterItem1 = MutableLiveData()
-                    viewModel!!.filterItem1!!.postValue((0..10).random().toString())
-                }
-                1 ->  {
-                    viewModel!!.filterItem2 = MutableLiveData()
-                    viewModel!!.filterItem2!!.postValue((0..10).random().toString())
-                }
-            }
+            val id = (0..10).random()
+            Log.d(TAG, "initView btRandomTest id = $id")
+            tvInfo?.text = ""
+            viewModel?.fetchUser(id)
         } }
     }
 
     private fun initViewModel() {
-        viewModel = ViewModelProvider(this, MainViewModel.MainViewModelFactory())[MainViewModel::class.java]
+        viewModel = ViewModelProvider(this, MainViewModel.MainViewModelFactory(application))[MainViewModel::class.java]
 
         viewModel!!.mediatorLiveData.observe(this, Observer{
             Log.d(TAG, "mediatorLiveData user = $it")
         })
-
-        viewModel!!.mediatorLiveData!!.addSource(viewModel!!.filterItem1){
-            Log.d(TAG, "FilterItem1 onChange = $it")
-            viewModel!!.mediatorLiveData.postValue(User(1, "filter1 temp", "filter1 temp2", "filter1 temp3"))
-        }
-
-        viewModel!!.mediatorLiveData!!.addSource(viewModel!!.filterItem2){
-            Log.d(TAG, "FilterItem2 onChange = $it")
-            viewModel!!.mediatorLiveData.postValue(User(2, "filter2 temp", "filter2 temp2", "filter2 temp3"))
-        }
     }
 
     private fun initUiObserver() {
@@ -87,7 +69,7 @@ class MainActivity : AppCompatActivity(R.layout.activity_main) {
             CoroutineScope(Dispatchers.Main).launch {
                 delay(1000)
                 tvInfo?.visibility = View.VISIBLE
-                tvInfo?.text = it.toString()
+                tvInfo?.text = tvInfo?.text.toString() + it.toString()
             }
         }
 
@@ -97,6 +79,7 @@ class MainActivity : AppCompatActivity(R.layout.activity_main) {
     }
 
     private fun initData(){
+        tvInfo?.text = ""
         viewModel?.fetchUser()
     }
 

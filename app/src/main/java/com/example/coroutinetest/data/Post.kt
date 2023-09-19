@@ -2,9 +2,8 @@ package com.example.coroutinetest.data
 
 import android.os.Parcel
 import android.os.Parcelable
-import com.google.gson.annotations.SerializedName
 
-data class Posts(
+data class Post(
     var userId: Int,
     var id: Int,
     var title: String,
@@ -29,12 +28,12 @@ data class Posts(
         return 0
     }
 
-    companion object CREATOR : Parcelable.Creator<Posts> {
-        override fun createFromParcel(parcel: Parcel): Posts {
-            return Posts(parcel)
+    companion object CREATOR : Parcelable.Creator<Post> {
+        override fun createFromParcel(parcel: Parcel): Post {
+            return Post(parcel)
         }
 
-        override fun newArray(size: Int): Array<Posts?> {
+        override fun newArray(size: Int): Array<Post?> {
             return arrayOfNulls(size)
         }
     }

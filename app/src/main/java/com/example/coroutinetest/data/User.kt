@@ -6,15 +6,17 @@ import com.google.gson.annotations.SerializedName
 
 data class User(
     var id: Int,
-    var name: String,
-    var email:String,
-    @SerializedName("username") var userName: String) :Parcelable{
-
+    var name: String?,
+    var email: String?,
+    @SerializedName("username") var userName: String?,
+    var userDetail:UserDetail?
+) :Parcelable{
     constructor(parcel: Parcel) : this(
         parcel.readInt(),
-        parcel.readString() ?: "",
-        parcel.readString() ?: "",
-        parcel.readString() ?: ""
+        parcel.readString(),
+        parcel.readString(),
+        parcel.readString(),
+        parcel.readParcelable(UserDetail::class.java.classLoader)
     ) {
     }
 
@@ -23,6 +25,7 @@ data class User(
         parcel.writeString(name)
         parcel.writeString(email)
         parcel.writeString(userName)
+        parcel.writeParcelable(userDetail, flags)
     }
 
     override fun describeContents(): Int {
@@ -38,4 +41,5 @@ data class User(
             return arrayOfNulls(size)
         }
     }
+
 }

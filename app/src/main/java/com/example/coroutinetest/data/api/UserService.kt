@@ -1,4 +1,4 @@
-package com.example.coroutinetest.data
+package com.example.coroutinetest.data.api
 
 import com.example.coroutinetest.data.User
 import retrofit2.http.GET
